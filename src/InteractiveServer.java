@@ -18,13 +18,14 @@ public class InteractiveServer {
                 DataInputStream dis = new DataInputStream  (s.getInputStream());
                 DataOutputStream dos = new DataOutputStream (s.getOutputStream());
                 String str = "";
+                String strUpper;
 
                 while (!str.equals ("FI"))
                 {
                     str = dis.readUTF();
                     System.out.println ("He rebut el missatge \"" + str + "\"");
-                    str = str.toUpperCase();
-                    dos.writeUTF (str);
+                    strUpper = str.toUpperCase();
+                    dos.writeUTF (strUpper);
                     dos.flush();
                 }
                 dis.close();
