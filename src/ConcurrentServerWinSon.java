@@ -1,9 +1,9 @@
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-public class ConcurrentServer
+public class ConcurrentServerWinSon
 {
     private static final int port = 1234;
 
@@ -17,9 +17,9 @@ public class ConcurrentServer
             for (;;)
             {
                 Socket s = ss.accept();
-                Thread t = new Thread (new Server (s), "Servidor-" + (++id));
+                Thread t = new Thread (new Server (s, true), "Servidor-" + (++id));
                 t.start();
-//                t.join();
+                t.join();
             }
         }
         catch (Exception e)
@@ -31,10 +31,12 @@ public class ConcurrentServer
     private static class Server implements Runnable
     {
         private Socket s;
+        private Boolean creaFill;
 
-        public Server (Socket s)
+        public Server (Socket s, Boolean creaFill)
         {
             this.s = s;
+            this.creaFill = creaFill;
         }
 
         public void run()
@@ -43,6 +45,11 @@ public class ConcurrentServer
             {
                 String name = Thread.currentThread().getName();
                 System.out.println (name + ": Connexió acceptada.");
+                if (this.creaFill){
+                    Thread fill = new Thread (new Server (s, false), "Fill de " + name);
+                    fill.start();
+                    return;
+                }
                 DataInputStream  dis = new DataInputStream  (s.getInputStream());
                 DataOutputStream dos = new DataOutputStream (s.getOutputStream());
                 String str = "";
